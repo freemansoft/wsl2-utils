@@ -15,29 +15,33 @@
 #>
 param (
     # the originating WSL distribution name
-    [String]$WslSourceName = "kali-linux",                       
+    [String]$WslSourceName = "kali-linux",
 
     # the target locaton for the distribution backup
-    [String]$ExportDir = "I:\wsl-export",                       
+    [String]$ExportDir = "I:\wsl-export",
     # the filename of the backup - default adds timestame to avoid overwrite
-    [String]$WslExportName = 
-    "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",    
+    [String]$WslExportName =
+    "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",
 
     # the target location for the new distribution vhdx file
-    [String]$DestDir = "I:\wsl",                                 
+    [String]$DestDir = "I:\wsl",
     # the destination WSL distribution name defaults to src
-    [String]$WslDestName = $WslSourceName,                        
+    [String]$WslDestName = $WslSourceName,
     # make this new distribution the default distribution
-    [boolean]$WslDestAsDefault = $true,                           
+    [boolean]$WslDestAsDefault = $true,
 
     # execute all steps but just log unregister and import if false
-    [boolean]$ExecuteUnregisterImport = $false                  
+    [boolean]$ExecuteUnregisterImport = $false
 )
 $ExportFullPath = "$ExportDir\$WslExportName"                   # the full path with filename to the distribution backup
 $DestFullPath = "$DestDir\$WslSourceName"                       # the full path to the distribution target vhdx filename
 
 # set to one to turn on tracing
 Set-PSDebug -Trace 0
+
+# Some machines need to be updated to pick up wslG and other pieces
+# This will get an elevation prompt
+wsl --update
 
 # TODO: Add a - are you sure you want to do this with the config info
 
@@ -69,22 +73,22 @@ wsl -t "$WslSourceName"
 if ( $?) {
     Write-Output "Export $WslSourceName to file $ExportFullPath"
     wsl --export "$WslSourceName" "$ExportFullPath"
-    # check for command success and resulting file.  
+    # check for command success and resulting file.
     # todo: should check size also
     if (( $? ) -and ( Test-Path -Path "$ExportFullPath" -PathType Leaf )) {
         if ($WslDestName -ne '') {
             # pretend we are unregistering and importing if only testing
             Write-Output "Unregistering existing instance of $WslSourceName"
-            if ($ExecuteUnregisterImport) { wsl --unregister "$WslSourceName" } 
+            if ($ExecuteUnregisterImport) { wsl --unregister "$WslSourceName" }
             else { Write-Output("    Non destructive mode") }
             Write-Output "Importing $WslDestName to location $DestFullPath from export file $ExportFullPath"
-            if ($ExecuteUnregisterImport) { wsl --import "$WslDestName" "$DestFullPath" "$ExportFullPath" } 
+            if ($ExecuteUnregisterImport) { wsl --import "$WslDestName" "$DestFullPath" "$ExportFullPath" }
             else { Write-Output("    Non destructive mode") }
 
             switch ($WslDestAsDefault) {
                 $true {
                     Write-Output "Setting default wsl distribution to $WslDestName"
-                    if ($ExecuteUnregisterImport) { wsl --setdefault "$WslDestName" }  
+                    if ($ExecuteUnregisterImport) { wsl --setdefault "$WslDestName" }
                     else { Write-Output("    Non destructive mode") }
                 }
             }

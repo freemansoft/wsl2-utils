@@ -1,7 +1,7 @@
 # DISCLAIMER
 Code in this repository is without Warranty.
 
-The move script will terminate and unregister your existing WSL instances.  This is a destructive operation that could leave you with no WSL instance if the backup failed. The script attempts to catch this but there may be situations where backup failure is not detected. 
+The move script will terminate and unregister your existing WSL instances.  This is a destructive operation that could leave you with no WSL instance if the backup failed. The script attempts to catch this but there may be situations where backup failure is not detected.
 
 # Purpose
 The scripts in this directory manipulate WSL2.
@@ -40,7 +40,7 @@ The move operation is comprised of main steps
     flowchart
     subgraph move-distribution[move-distribution.ps1]
         CreateDirs[Create directories for backup files and vhd destination directories]
-        CreateDirs -.-> Terminate[Terminate distribution] 
+        CreateDirs -.-> Terminate[Terminate distribution]
         Terminate --> Backup[Create tar backup of the vhd];
         Backup --> Unregister[Unregister: Removes registration and vhd];
         Unregister --> Import[Import: Create vhd from backup and register the distribution]
@@ -53,8 +53,8 @@ The move operation is comprised of main steps
 ```
 
 # Using this script
-Edit this section of `move-distribution.ps1` and change the parameters to fit your needs. 
-* Pay **special** attention to the `$ExecuteUnregisterImport` parameter.  
+Edit this section of `move-distribution.ps1` and change the parameters to fit your needs.
+* Pay **special** attention to the `$ExecuteUnregisterImport` parameter.
 * Leave `$ExecuteUnregisterImport` set to `false` for your first test run.
 * Make sure you have enough disk space for the .tar file and the vhdx in the places you locate them. Ex:
     * Fresh Kali is a 500k tar file
@@ -66,23 +66,23 @@ The latest and most correct param list is in `move-distribution.ps1`. The param 
 ```dotnetcli
 param (
     # the originating WSL distribution name
-    [String]$WslSourceName = "kali-linux",                       
+    [String]$WslSourceName = "kali-linux",
 
     # the target locaton for the distribution backup
-    [String]$ExportDir = "I:\wsl-export",                       
+    [String]$ExportDir = "I:\wsl-export",
     # the filename of the backup - no overwrite
-    [String]$WslExportName = 
-    "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",    
+    [String]$WslExportName =
+    "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",
 
     # the target location for the new distribution vhdx file
-    [String]$DestDir = "I:\wsl",                                 
+    [String]$DestDir = "I:\wsl",
     # the destination WSL distribution name defaults to src
-    [String]$WslDestName = $WslSourceName,                        
+    [String]$WslDestName = $WslSourceName,
     # make this new distribution the default distribution
-    [boolean]$WslDestAsDefault = $true,                           
+    [boolean]$WslDestAsDefault = $true,
 
     # execute all steps but just log unregister and import if false
-    [boolean]$ExecuteUnregisterImport = $false                  
+    [boolean]$ExecuteUnregisterImport = $false
 )
 ```
 
@@ -95,10 +95,10 @@ Regaining that .exe file involves thinking and registry works.
 ## The default user selection is lost
 The default user when opening a connection becomes `root`.
 You can reset the default user for Linux Distributions.
-The import operation will lose the default user resulting in all shells opening as root. That binding is actually stored in a windows registry entry. 
+The import operation will lose the default user resulting in all shells opening as root. That binding is actually stored in a windows registry entry.
 
 ### Simple fix
-Edit the file `/etc/wsl.conf` in each imported system and add the following section.  
+Edit the file `/etc/wsl.conf` in each imported system and add the following section.
 Some distributions like `Ubuntu` will already have sections in the file. In that case, just append this content.
 
 ```
@@ -109,12 +109,12 @@ This change has the added benefit that all later moves will have the write defau
 
 **Steps**
 1. Add the content to `/etc/wsl.conf` as `root`
-1. Terminate the wsl distribution with `wsl --terminate <distribution-name>` 
+1. Terminate the wsl distribution with `wsl --terminate <distribution-name>`
 1. Wait 8 seconds
 1. Open a new terminal into that distribution.
 
 ### Explanation - Windows registry link was broken
-The default UID is `0` which you can see with the output of 
+The default UID is `0` which you can see with the output of
 ```
 Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss\
 ```
@@ -128,10 +128,11 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 1. Add a backup _only_ script for snapshoting wsl instances or make flags easier to use. Currently supported via `$ExecuteUnregisterImport=$false`
 1. Add ability to remove the backup tar file when done.  Currently leaves in place
 1. Add ability to create a backup and unregister without a following import.
-1. Add ability to update the default user from `UID=0` / `root` to something else using `wsl.exe` edit to `/etc/wsl.conf`file 
+1. Add ability to update the default user from `UID=0` / `root` to something else using `wsl.exe` edit to `/etc/wsl.conf`file
 1. Move Powershell param docs into doc block so that `help` command works.
 
 ## Completed Todo Items
+1. Added `wsl --update` to upgrade WSL runtime to the latest
 1. Added return codes on all early exit paths
 1. Add a `$ExecuteUnregisterImport` parameter that doesn't execute the destructive commands _complete 2023/06_
 1. Add set as default _complete 2023/06_
@@ -140,7 +141,7 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 
 ## Kali Linux Hints with WSLg
 
-Install and execute as you
+Install and update
 ```bash
 # install kex
 sudo apt update
@@ -148,7 +149,10 @@ sudo apt upgrade
 sudo apt install -y kali-win-kex
 # Jack up the install to everything
 sudo apt install -y kali-linux-large
-# Start it up
+```
+
+Execute as you from Linux
+```bash
 kex --win -s
 ```
 
@@ -160,7 +164,7 @@ wsl -d kali-linux kex --win -s
 * Ref: https://www.kali.org/docs/wsl/win-kex/
 
 # Ubuntu
-_Just use Kali if you want a linux desktop_ 
+_Just use Kali if you want a linux desktop_
 
 Install and execute as you
 ```bash
