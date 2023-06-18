@@ -54,7 +54,13 @@ The move operation is comprised of main steps
 
 # Using this script
 Edit this section of `move-distribution.ps1` and change the parameters to fit your needs. 
-* Pay **special** attention to the `$ExecuteUnregisterImport` parameter
+* Pay **special** attention to the `$ExecuteUnregisterImport` parameter.  
+* Leave `$ExecuteUnregisterImport` set to `false` for your first test run.
+* Make sure you have enough disk space for the .tar file and the vhdx in the places you locate them. Ex:
+    * Fresh Kali is a 500k tar file
+    * Fresh Kali with Kex is a 3GB tar file
+    * Full Kali is an 18GB tar file.
+    * Fresh Ubuntu is 1.6GB
 
 The latest and most correct param list is in `move-distribution.ps1`. The param shown here may be out of date.
 ```dotnetcli
@@ -119,7 +125,8 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 
 
 # Todo Items
-1. Add a backup _only_ script for snapshoting wsl instances
+1. Add a backup _only_ script for snapshoting wsl instances or make flags easier to use
+1. Add flag that enables removal of the backup tar file.  Currently leaves in place
 1. Add wsl edit to `/etc/wsl.conf` to update the default user from `UID=0` / `root` to something else
 1. Move param docs into doc block - ugh I hate that
 
