@@ -10,19 +10,27 @@ The script in this directory will move a WSL instance from one location to a new
 Edit this section of `move-distribution.ps1` and change the parameters to fit your needs. 
 * Pay **special** attention to the `$ExecuteUnregisterImport` parameter
 
+The latest and most correct param list is in `move-distribution.ps1`. The param shown here may be out of date.
 ```dotnetcli
 param (
-    [String]$WslSourceName= "Ubuntu-20.04",                       # the originating WSL distribution name
+    # the originating WSL distribution name
+    [String]$WslSourceName = "kali-linux",                       
 
-    [String]$ExportDir=  "I:\wsl-export",                       # the target locaton for the distribution backup
-    [String]$WslExportName= 
-        "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",    # the filename of the backup - no overwrite
+    # the target locaton for the distribution backup
+    [String]$ExportDir = "I:\wsl-export",                       
+    # the filename of the backup - no overwrite
+    [String]$WslExportName = 
+    "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",    
 
-    [String]$DestDir= "I:\wsl",                                 # the target location for the new distribution vhdx file
-    [String]$WslDestName=$WslSourceName,                        # the destination WSL distribution name defaults to src
-    [boolean]$WslDestAsDefault=$true,                           # make this new distribution the default distribution
+    # the target location for the new distribution vhdx file
+    [String]$DestDir = "I:\wsl",                                 
+    # the destination WSL distribution name defaults to src
+    [String]$WslDestName = $WslSourceName,                        
+    # make this new distribution the default distribution
+    [boolean]$WslDestAsDefault = $true,                           
 
-    [boolean]$ExecuteUnregisterImport=$false                    # execute all steps but just log unregister and import if false
+    # execute all steps but just log unregister and import if false
+    [boolean]$ExecuteUnregisterImport = $false                  
 )
 ```
 
@@ -31,14 +39,21 @@ The import operation will lose the default user resulting in all shells opening 
 
 ### Simple fix
 Edit the file `/etc/wsl.conf` in each imported system and add the following section.  
-Some distributions like `Ubuntu` will already have sections in the file. Others will not.
+Some distributions like `Ubuntu` will already have sections in the file. In that case, just append this content.
+
 ```
 [user]
 default=<your_username>
 ```
-Terminate the wsl distribution with `wsl --terminate <distribution-name>` and then open a new terminal into that distribution.
+This change has the added benefit that all later moves will have the write default user because `/etc/wsl.conf` becomes part of the migration backup.
 
-### Explanation - registry link was broken
+**Steps**
+1. Add the content to `/etc/wsl.conf` as `root`
+1. Terminate the wsl distribution with `wsl --terminate <distribution-name>` 
+1. Wait 8 seconds
+1. Open a new terminal into that distribution.
+
+### Explanation - Windows registry link was broken
 The default UID is `0` which you can see with the output of 
 ```
 Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss\
@@ -52,6 +67,7 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 # Todo Items
 1. Add a backup _only_ script for snapshoting wsl instances
 1. Add wsl edit to `/etc/wsl.conf` to update the default user from `UID=0` / `root` to something else
+1. Move param docs into doc block - ugh I hate that
 
 ## Completed Todo Items
 1. Add a `$ExecuteUnregisterImport` parameter that doesn't execute the destructive commands _complete 2023/06_
