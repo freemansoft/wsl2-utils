@@ -14,7 +14,7 @@ param (
     [String]$WslDestName=$WslSourceName,                        # the destination WSL distribution name defaults to src
     [boolean]$WslDestAsDefault=$true,                           # make this new distribution the default distribution
 
-    [boolean]$ExecuteUnregisterImport=$true                    # execute all steps but just log unregister and import if false
+    [boolean]$ExecuteUnregisterImport=$false                    # execute all steps but just log unregister and import if false
 )
 $ExportFullPath = "$ExportDir\$WslExportName"                   # the full path with filename to the distribution backup
 $DestFullPath="$DestDir\$WslSourceName"                         # the full path to the distribution target vhdx filename
