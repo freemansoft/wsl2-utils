@@ -125,10 +125,11 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 
 
 # Todo Items
-1. Add a backup _only_ script for snapshoting wsl instances or make flags easier to use
-1. Add flag that enables removal of the backup tar file.  Currently leaves in place
-1. Add wsl edit to `/etc/wsl.conf` to update the default user from `UID=0` / `root` to something else
-1. Move param docs into doc block - ugh I hate that
+1. Add a backup _only_ script for snapshoting wsl instances or make flags easier to use. Currently supported via `$ExecuteUnregisterImport=$false`
+1. Add ability to remove the backup tar file when done.  Currently leaves in place
+1. Add ability to create a backup and unregister without a following import.
+1. Add ability to update the default user from `UID=0` / `root` to something else using `wsl.exe` edit to `/etc/wsl.conf`file 
+1. Move Powershell param docs into doc block so that `help` command works.
 
 ## Completed Todo Items
 1. Added return codes on all early exit paths
