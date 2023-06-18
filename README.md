@@ -80,7 +80,15 @@ param (
 )
 ```
 
-# Resetting the default user for Linux Distributions
+# Things that are lost when moving a registration location
+
+## The distribution.exe file no longer exists.
+The WSL installation process creates a `<distribution>.exe` file for each distribution. You can use that command similarly to the wsl command.
+Regaining that .exe file involves thinking and registry works.
+
+## The default user selection is lost
+The default user when opening a connection becomes `root`.
+You can reset the default user for Linux Distributions.
 The import operation will lose the default user resulting in all shells opening as root. That binding is actually stored in a windows registry entry. 
 
 ### Simple fix
