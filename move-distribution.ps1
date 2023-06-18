@@ -48,7 +48,7 @@ if ($WslList.contains($WslSourceName)) {
 }
 else {
     Write-Output "wsl distribution $WslSourceName does not exist in $WslList"
-    return
+    return 11
 }
 Write-Output "Moving instance $WslSourceName to $DestDir"
 
@@ -56,12 +56,12 @@ Write-Output "Moving instance $WslSourceName to $DestDir"
 New-Item -ItemType Directory -Force -Path $ExportDir | out-null
 if (!(test-path -PathType container $ExportDir)) {
     Write-Output "$ExportDir does not exist and was not created"
-    return
+    return 12
 }
 New-Item -ItemType Directory -Force -Path $DestDir | out-null
 if (!(test-path -PathType container $DestDir)) {
     Write-Output "$DestDir does not exist and was not created"
-    return
+    return 13
 }
 
 Write-Output "Terminating WSL $WslSourceName"
@@ -90,16 +90,21 @@ if ( $?) {
             }
             # todo: should verify it exists like we did above - remove the --verbose for that
             wsl --list --verbose
+            return 0
         }
         else {
             Write-Output "No wsl destination name specified. Treating as backup of $WslSourceName"
+            return 21
         }
     }
     else {
         Write-Output "Abort: Failed to backup instance"
+        return 22
     }
 }
 else {
     Write-Output "Abort: Failed to terminate instance"
+    return 23
 }
 # Set-PSDebug -Trace 0
+# no return needed here

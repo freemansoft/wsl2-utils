@@ -4,9 +4,55 @@ Code in this repository is without Warranty.
 The move script will terminate and unregister your existing WSL instances.  This is a destructive operation that could leave you with no WSL instance if the backup failed. The script attempts to catch this but there may be situations where backup failure is not detected. 
 
 # Purpose
-The script in this directory will move a WSL instance from one location to a new one using the `wsl export` function.
+The scripts in this directory manipulate WSL2.
+* `move-distribution.ps1` will move a WSL instance from one location to a new one using the `wsl export` function.
+```mermaid
+    flowchart
+    subgraph WSL
+    end
+    subgraph Distributions[Registered Distributions]
+        Ubuntu-20.04
+        kali-linux
+        docker-desktop
+        docker-desktop-data
+    end
+    subgraph Vhds[Virtual Disk Files]
+        Ubuntu-20.04.vhd[Ubuntu-20.04 vhdx]
+        kali-linux.vhd[Kali Linux vhdx]
+        docker-desktop.vhd[docker desktop vhdx]
+        docker-desktop-data.vhd[docker desktop data vndx]
+    end
+    WSL -.-> Ubuntu-20.04
+    WSL -.-> kali-linux
+    WSL -.-> docker-desktop
+    WSL -.-> docker-desktop-data
 
-# Move the linux distribution
+    Ubuntu-20.04 -.-> Ubuntu-20.04.vhd
+    kali-linux -.-> kali-linux.vhd
+    docker-desktop -.-> docker-desktop.vhd
+    docker-desktop-data -.-> docker-desktop-data.vhd
+```
+
+# Moving a WSL2 distribution
+The move operation is comprised of main steps
+
+```mermaid
+    flowchart
+    subgraph move-distribution[move-distribution.ps1]
+        CreateDirs[Create backup and target vhd directories]
+        CreateDirs -.-> Terminate[Terminate distribution] 
+        Terminate --> Backup[Create tar backup of the vhd];
+        Backup --> Unregister[Unregister: Removes registration and vhd];
+        Unregister --> Import[Import: Create vhd from backup and register the distribution]
+        Import --> SetDefaultRegistration[Set imported as default if requested]
+    end
+    subgraph manual-steps
+        SetDefaultRegistration -.-> SetDefaultUser[Add default user to wsl.conf]
+    end
+
+```
+
+# Using this script
 Edit this section of `move-distribution.ps1` and change the parameters to fit your needs. 
 * Pay **special** attention to the `$ExecuteUnregisterImport` parameter
 
@@ -34,7 +80,7 @@ param (
 )
 ```
 
-# Resetting the default user
+# Resetting the default user for Linux Distributions
 The import operation will lose the default user resulting in all shells opening as root. That binding is actually stored in a windows registry entry. 
 
 ### Simple fix
@@ -70,6 +116,7 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 1. Move param docs into doc block - ugh I hate that
 
 ## Completed Todo Items
+1. Added return codes on all early exit paths
 1. Add a `$ExecuteUnregisterImport` parameter that doesn't execute the destructive commands _complete 2023/06_
 1. Add set as default _complete 2023/06_
 
