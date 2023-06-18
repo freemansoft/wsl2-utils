@@ -138,16 +138,21 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 1. Add set as default _complete 2023/06_
 
 # Adding GUI to Distributions
+1. Update kali-linux
+2. Install `kali-win-hex` for remote desktop support
+3. Install any other wanted kali-linux components
 
-Update your wsl version to make sure the latest `WSLg` support is installed.  This code exists in `move-distribution.ps1`
+
+## Upgrade WSL to support GUIs
+
+Update your WSL to make sure the latest `WSLg` support is installed.  This code exists in `move-distribution.ps1`
 ```dotnetcli
 wsl --update
 ```
 
-## Kali Linux Hints with WSLg
+## Install kali-win-kex for remote dekstop.
 Kali Linux has a package `kali-win-kex` that adds remote desktop access to the Linux GUI with a single updated component.
 
-Update kali-linux and install the kali-win-hex from Linux to support running the GUI in WSL
 ```bash
 # install kex
 sudo apt update
@@ -157,12 +162,15 @@ sudo apt install -y kali-win-kex
 sudo apt install -y kali-linux-large
 ```
 
-Execute as you from Linux to bring up the Linux GUI
+## Launch
+
+Launch the WSL2 Kali desktop from a terminal window.  It will run full screen on the current monitor. Execute _as you_ from a Linux command line to bring up the Linux GUI
+
 ```bash
 kex --win -s
 ```
 
-Execute as you from Windows to bring up the Linux GUI
+Execute this as you from Windows to bring up the Linux GUI
 ```dotnetcli
 wsl -d kali-linux kex --win -s
 ```
