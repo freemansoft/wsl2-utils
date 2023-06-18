@@ -20,7 +20,7 @@ The scripts in this directory manipulate WSL2.
         Ubuntu-20.04.vhd[Ubuntu-20.04 vhdx]
         kali-linux.vhd[Kali Linux vhdx]
         docker-desktop.vhd[docker desktop vhdx]
-        docker-desktop-data.vhd[docker desktop data vndx]
+        docker-desktop-data.vhd[docker desktop data vhdx]
     end
     WSL -.-> Ubuntu-20.04
     WSL -.-> kali-linux
@@ -39,7 +39,7 @@ The move operation is comprised of main steps
 ```mermaid
     flowchart
     subgraph move-distribution[move-distribution.ps1]
-        CreateDirs[Create backup and target vhd directories]
+        CreateDirs[Create directories for backup files and vhd destination directories]
         CreateDirs -.-> Terminate[Terminate distribution] 
         Terminate --> Backup[Create tar backup of the vhd];
         Backup --> Unregister[Unregister: Removes registration and vhd];
