@@ -1,8 +1,7 @@
 # DISCLAIMER
 Code in this repository is without Warranty.
 
-**DANGER**
-The move script will terminate and unregister your existing WSL instances.  This is a destructive operation that could leave you with no WSL instance if the backup failed. The script attempts to catch this but there may be situations where backupfailure is not detected
+The move script will terminate and unregister your existing WSL instances.  This is a destructive operation that could leave you with no WSL instance if the backup failed. The script attempts to catch this but there may be situations where backup failure is not detected. 
 
 # Purpose
 The script in this directory will move a WSL instance from one location to a new one using the `wsl export` function.
