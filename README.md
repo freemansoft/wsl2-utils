@@ -7,15 +7,22 @@ The move script will terminate and unregister your existing WSL instances.  This
 The script in this directory will move a WSL instance from one location to a new one using the `wsl export` function.
 
 # Move the linux distribution
-Edit this section of move-distribution.ps1` and change the parameters to fit your needs.
+Edit this section of `move-distribution.ps1` and change the parameters to fit your needs. 
+* Pay **special** attention to the `$ExecuteUnregisterImport` parameter
 
 ```dotnetcli
 param (
-    [String]$WslName= "kali-linux",
-    [String]$WslExportName= "$WslName.tar",
+    [String]$WslSourceName= "Ubuntu-20.04",                       # the originating WSL distribution name
 
-    [String]$ExportDir=  "I:\wsl-export",
-    [String]$DestDir= "I:\wsl"
+    [String]$ExportDir=  "I:\wsl-export",                       # the target locaton for the distribution backup
+    [String]$WslExportName= 
+        "$WslSourceName-$(get-date -f yyyyMMdd-HHmmss).tar",    # the filename of the backup - no overwrite
+
+    [String]$DestDir= "I:\wsl",                                 # the target location for the new distribution vhdx file
+    [String]$WslDestName=$WslSourceName,                        # the destination WSL distribution name defaults to src
+    [boolean]$WslDestAsDefault=$true,                           # make this new distribution the default distribution
+
+    [boolean]$ExecuteUnregisterImport=$false                    # execute all steps but just log unregister and import if false
 )
 ```
 
@@ -41,9 +48,12 @@ You cannot run `<instance>.exe config --default-user <username>` because the .ex
 
 
 # Todo Items
-1. Add a test parameter that doesn't execute the destructive commands
 1. Add a backup _only_ script for snapshoting wsl instances
 1. Add wsl edit to `/etc/wsl.conf` to update the default user from `0` to something else
+
+## Completed Todo Items
+1. Add a `$ExecuteUnregisterImport` parameter that doesn't execute the destructive commands _complete 2023/06_
+1. Add set as default _complete 2023/06_
 
 # Adding GUI to Distributions
 
@@ -84,3 +94,9 @@ sudo apt-get upgrade
 
 * Ref: https://github.com/microsoft/wslg
 * Ref: I agree with https://ubunlog.com/en/como-instalar-ubuntu-con-interfaz-grafica-en-windows-gracias-a-wsl2-o-mejor-aun-kali-linux/
+
+# WSL cheat sheet
+* `wsl ~ -d <distribution>` starts the distribution and connects as default user Ex:`wsl ~ -d kali-linux`
+* `wsl ~ -d <distribution> -u root`  starts the distribution and connects as root Ex:`wsl ~ -d kali-linux -u root`
+* `wsl -d <distribution> -u root <command>` starts the distribution and runs command as root Ex:`wsl -d kali-linux -u root cat /etc/wsl.conf`
+* `wsl --setdefault <distribution>` sets the default distribution name Ex: `wsl --setdefault kali-linux`
