@@ -27,29 +27,31 @@ param (
 ```
 
 # Resetting the default user
-The import operation will lose the default user resulting in all shells opening as root. 
+The import operation will lose the default user resulting in all shells opening as root. That binding is actually stored in a windows registry entry. 
 
 ### Simple fix
-Edit the file `/etc/wsl.conf` in each imported system
+Edit the file `/etc/wsl.conf` in each imported system and add the following section.  
+Some distributions like `Ubuntu` will already have sections in the file. Others will not.
 ```
 [user]
 default=<your_username>
 ```
 Terminate the wsl distribution with `wsl --terminate <distribution-name>` and then open a new terminal into that distribution.
 
-### Explanation
+### Explanation - registry link was broken
 The default UID is `0` which you can see with the output of 
 ```
 Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss\
 ```
 * Ref: https://askubuntu.com/questions/1427355/why-has-my-ubuntu-started-defaulting-to-root-user-on-startup-duel-running-wind
 
+### Explanation - can't fix with instance command
 You cannot run `<instance>.exe config --default-user <username>` because the .exe link isn't made with an import
 
 
 # Todo Items
 1. Add a backup _only_ script for snapshoting wsl instances
-1. Add wsl edit to `/etc/wsl.conf` to update the default user from `0` to something else
+1. Add wsl edit to `/etc/wsl.conf` to update the default user from `UID=0` / `root` to something else
 
 ## Completed Todo Items
 1. Add a `$ExecuteUnregisterImport` parameter that doesn't execute the destructive commands _complete 2023/06_
